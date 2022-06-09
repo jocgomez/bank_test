@@ -1,4 +1,3 @@
-import 'package:bank_test/presentation/resources/assets_manager.dart';
 import 'package:bank_test/presentation/resources/color_manager.dart';
 import 'package:bank_test/presentation/resources/routes_manager.dart';
 import 'package:bank_test/presentation/resources/values_manager.dart';
@@ -16,7 +15,7 @@ class _SplashViewState extends State<SplashView> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Wait 2 seconds before navigate to the next screen (Simulate loading some data)
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         Navigator.pushReplacementNamed(context, Routes.loginRoute);
       });
     });
@@ -34,7 +33,7 @@ class _SplashViewState extends State<SplashView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(ColorManager.white),
+                valueColor: AlwaysStoppedAnimation<Color>(ColorManager.primary),
               ),
             ],
           ),
