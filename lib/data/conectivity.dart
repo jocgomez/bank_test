@@ -2,7 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-class LdConnection {
+class Connection {
   static Future<bool> validateConnection() async {
     final ConnectivityResult connectivityResult =
         await Connectivity().checkConnectivity();

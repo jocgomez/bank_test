@@ -1,3 +1,4 @@
+import 'package:bank_test/presentation/extension/snackbar_build.dart';
 import 'package:bank_test/presentation/resources/routes_manager.dart';
 import 'package:bank_test/presentation/resources/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: SnackbarBuild.key,
       debugShowCheckedModeBanner: false,
       onGenerateRoute: RouteGenerator.getRoute,
       initialRoute: Routes.splashRoute,

@@ -23,7 +23,7 @@ extension ShowSnackbar on BuildContext {
               child: Text(
                 message,
                 style: TextStyle(
-                  color: ColorManager.primary,
+                  color: ColorManager.grey,
                   fontSize: FontSizeManager.s12,
                 ),
               ),
@@ -62,7 +62,7 @@ extension ShowSnackbar on BuildContext {
                 child: Text(
                   message,
                   style: TextStyle(
-                    color: ColorManager.primary,
+                    color: ColorManager.grey,
                     fontSize: FontSizeManager.s12,
                   ),
                 ),
@@ -112,7 +112,7 @@ extension ShowSnackbar on BuildContext {
                 child: Text(
                   message,
                   style: TextStyle(
-                    color: ColorManager.primary,
+                    color: ColorManager.grey,
                     fontSize: FontSizeManager.s12,
                   ),
                 ),
@@ -151,7 +151,7 @@ extension ShowSnackbar on BuildContext {
                 child: Text(
                   message,
                   style: TextStyle(
-                    color: ColorManager.primary,
+                    color: ColorManager.grey,
                     fontSize: FontSizeManager.s12,
                   ),
                 ),
