@@ -1,3 +1,4 @@
+import 'package:bank_test/domain/models/account.dart';
 import 'package:bank_test/presentation/account_detail/account_detail_view.dart';
 import 'package:bank_test/presentation/home/home_view.dart';
 import 'package:bank_test/presentation/login/login_view.dart';
@@ -26,7 +27,11 @@ class RouteGenerator {
       case Routes.homeRoute:
         return MaterialPageRoute(builder: (_) => const HomeView());
       case Routes.accountDetailRoute:
-        return MaterialPageRoute(builder: (_) => const AccountDetailView());
+        return MaterialPageRoute(
+          builder: (_) => AccountDetailView(
+            account: routeSettings.arguments! as Account,
+          ),
+        );
       default:
         return undefinedRoute();
     }

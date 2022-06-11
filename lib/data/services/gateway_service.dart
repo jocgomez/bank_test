@@ -9,7 +9,7 @@ class UrlsApi {
   static const String getAccountInformation =
       '/79bd5861-8cbf-46b6-bb6c-88b13457c40f';
   static const String getMovementAccount =
-      '/ed3641e0-b97e-4c81-a404-24cbdc36430e';
+      '/8997dfa4-bcd8-48cf-abcf-73288aa40b3c';
 }
 
 @RestApi(baseUrl: 'https://run.mocky.io/v3')
@@ -21,6 +21,6 @@ abstract class GatewayService {
   Future<AccountInfo> getAccountInformation();
 
   //Account movements
-  @POST(UrlsApi.getAccountInformation)
+  @POST(UrlsApi.getMovementAccount)
   Future<MovementAccountInfo> getMovementAccountInformation();
 }

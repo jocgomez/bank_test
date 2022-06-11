@@ -182,7 +182,6 @@ class _SearchSort extends StatelessWidget {
                   ),
                 ),
               ),
-              // TODO: Search account in real time
               onChanged: viewModel.searchAccounts,
             ),
           ),

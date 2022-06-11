@@ -1,6 +1,13 @@
+import 'dart:async';
+
+import 'package:bank_test/data/get_it_locator.dart';
+import 'package:bank_test/data/services/service_iteractor.dart';
 import 'package:bank_test/domain/models/account.dart';
 import 'package:bank_test/domain/models/movements/movement.dart';
+import 'package:bank_test/presentation/account_detail/account_detail_effect.dart';
+import 'package:bank_test/presentation/account_detail/account_detail_view_model.dart';
 import 'package:bank_test/presentation/components/account_card.dart';
+import 'package:bank_test/presentation/extension/snackbar_build.dart';
 import 'package:bank_test/presentation/resources/color_manager.dart';
 import 'package:bank_test/presentation/resources/enum_manager.dart';
 import 'package:bank_test/presentation/resources/font_manager.dart';
@@ -8,15 +15,66 @@ import 'package:bank_test/presentation/resources/string_manager.dart';
 import 'package:bank_test/presentation/resources/values_manager.dart';
 import 'package:bank_test/utils/format_amount.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AccountDetailView extends StatefulWidget {
-  const AccountDetailView({Key? key}) : super(key: key);
+class AccountDetailView extends StatelessWidget {
+  const AccountDetailView({Key? key, required this.account}) : super(key: key);
+  final Account account;
 
   @override
-  State<AccountDetailView> createState() => _AccountDetailViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<AccountDetailViewModel>(
+      create: (_) => AccountDetailViewModel(
+        locator<ServiceInteractor>(),
+        account,
+      ),
+      builder: (BuildContext context, _) {
+        return const _AccountDetailBody();
+      },
+    );
+  }
 }
 
-class _AccountDetailViewState extends State<AccountDetailView> {
+class _AccountDetailBody extends StatefulWidget {
+  const _AccountDetailBody({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_AccountDetailBody> createState() => __AccountDetailBodyState();
+}
+
+class __AccountDetailBodyState extends State<_AccountDetailBody> {
+  late StreamSubscription<AccountDetailEffect> _effectSubscription;
+
+  @override
+  void initState() {
+    AccountDetailViewModel viewModel = context.read<AccountDetailViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.onInit();
+    });
+
+    _effectSubscription =
+        viewModel.effects.listen((AccountDetailEffect event) async {
+      if (event is ShowSnackbarConnectivityEffect) {
+        SnackbarBuild.buildConnectivitySnackbar(context, event.message);
+      } else if (event is ShowSnackbarErrorEffect) {
+        SnackbarBuild.buildSnackbar(context, event.message);
+      } else if (event is ShowSnackbarSuccessEffect) {
+        SnackbarBuild.buildSuccessSnackbar(context, event.message);
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _effectSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +83,7 @@ class _AccountDetailViewState extends State<AccountDetailView> {
       body: LayoutBuilder(builder: (context, constraints) {
         return SizedBox(
           height: constraints.maxHeight,
-          child: const _AccountDetailBody(),
+          child: const _AccountDetailContent(),
         );
       }),
     );
@@ -56,46 +114,52 @@ class _AccountDetailAppbar extends StatelessWidget
   }
 }
 
-class _AccountDetailBody extends StatelessWidget {
-  const _AccountDetailBody({Key? key}) : super(key: key);
+class _AccountDetailContent extends StatelessWidget {
+  const _AccountDetailContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    AccountDetailViewModel viewModel = context.watch<AccountDetailViewModel>();
+
     return Column(
       children: <Widget>[
         const SizedBox(height: AppSize.s20),
         AccountCard(
           account: Account(
-            numero: '111111111',
-            saldo: '30000000',
-            fechaApertura: '10/01/2022',
+            numero: viewModel.account.numero,
+            saldo: viewModel.account.saldo,
+            fechaApertura: viewModel.account.fechaApertura,
           ),
           onTap: false,
         ),
         const SizedBox(height: AppSize.s30),
-        const _ListAccountMovements(),
+        _ListAccountMovements(viewModel: viewModel),
       ],
     );
   }
 }
 
 class _ListAccountMovements extends StatelessWidget {
-  const _ListAccountMovements({Key? key}) : super(key: key);
+  const _ListAccountMovements({Key? key, required this.viewModel})
+      : super(key: key);
+  final AccountDetailViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
       child: ListView.separated(
-          itemCount: 10,
+          itemCount: viewModel.status.movementAccountInfo.movimientos.length,
           separatorBuilder: (context, index) {
             return const Divider();
           },
           itemBuilder: (context, index) {
+            Movement movement =
+                viewModel.status.movementAccountInfo.movimientos[index];
             return _AccountMovement(
               movement: Movement(
-                tipo: 'ingreso',
-                monto: '100000',
-                fechaMovimiento: '10/10/2020',
+                tipo: movement.tipo,
+                monto: movement.monto,
+                fechaMovimiento: movement.fechaMovimiento,
               ),
             );
           }),

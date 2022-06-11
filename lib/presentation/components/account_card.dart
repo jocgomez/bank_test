@@ -22,7 +22,11 @@ class AccountCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap
             ? () {
-                Navigator.pushNamed(context, Routes.accountDetailRoute);
+                Navigator.pushNamed(
+                  context,
+                  Routes.accountDetailRoute,
+                  arguments: account,
+                );
               }
             : null,
         child: Row(

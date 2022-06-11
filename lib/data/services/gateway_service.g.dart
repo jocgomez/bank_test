@@ -40,7 +40,7 @@ class _GatewayService implements GatewayService {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<MovementAccountInfo>(
             Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/79bd5861-8cbf-46b6-bb6c-88b13457c40f',
+                .compose(_dio.options, '/8997dfa4-bcd8-48cf-abcf-73288aa40b3c',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = MovementAccountInfo.fromJson(_result.data!);
