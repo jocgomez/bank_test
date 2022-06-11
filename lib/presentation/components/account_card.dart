@@ -51,7 +51,7 @@ class AccountCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              account.accountNumber,
+                              account.numero,
                               style: TextStyle(
                                 fontSize: FontSizeManager.s12,
                                 fontWeight: FontWeightManager.medium,
@@ -60,7 +60,7 @@ class AccountCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Text(account.createdDate,
+                        Text(account.fechaApertura,
                             style: TextStyle(
                                 fontSize: FontSizeManager.s12,
                                 fontWeight: FontWeightManager.medium,

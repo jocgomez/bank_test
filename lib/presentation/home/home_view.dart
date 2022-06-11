@@ -1,5 +1,12 @@
+import 'dart:async';
+
+import 'package:bank_test/data/get_it_locator.dart';
+import 'package:bank_test/data/services/service_iteractor.dart';
 import 'package:bank_test/domain/models/account.dart';
 import 'package:bank_test/presentation/components/account_card.dart';
+import 'package:bank_test/presentation/extension/snackbar_build.dart';
+import 'package:bank_test/presentation/home/home_effect.dart';
+import 'package:bank_test/presentation/home/home_view_model.dart';
 import 'package:bank_test/presentation/resources/assets_manager.dart';
 import 'package:bank_test/presentation/resources/color_manager.dart';
 import 'package:bank_test/presentation/resources/font_manager.dart';
@@ -10,24 +17,72 @@ import 'package:bank_test/presentation/resources/values_manager.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class HomeView extends StatefulWidget {
+import 'package:provider/provider.dart';
+
+class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<HomeViewModel>(
+      create: (_) => HomeViewModel(
+        locator<ServiceInteractor>(),
+      ),
+      builder: (BuildContext context, _) {
+        return const _HomeBody();
+      },
+    );
+  }
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeBody extends StatefulWidget {
+  const _HomeBody({Key? key}) : super(key: key);
+
+  @override
+  State<_HomeBody> createState() => __HomeBodyState();
+}
+
+class __HomeBodyState extends State<_HomeBody> {
+  late StreamSubscription<HomeEffect> _effectSubscription;
+
+  @override
+  void initState() {
+    HomeViewModel viewModel = context.read<HomeViewModel>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.onInit();
+    });
+
+    _effectSubscription = viewModel.effects.listen((HomeEffect event) async {
+      if (event is ShowSnackbarConnectivityEffect) {
+        SnackbarBuild.buildConnectivitySnackbar(context, event.message);
+      } else if (event is ShowSnackbarErrorEffect) {
+        SnackbarBuild.buildSnackbar(context, event.message);
+      } else if (event is ShowSnackbarSuccessEffect) {
+        SnackbarBuild.buildSuccessSnackbar(context, event.message);
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _effectSubscription.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    HomeViewModel viewModel = context.watch<HomeViewModel>();
+
     return Scaffold(
       backgroundColor: ColorManager.white,
-      appBar: const _HomeAppbar(),
+      appBar: _HomeAppbar(viewModel: viewModel),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SizedBox(
             height: constraints.maxHeight,
-            child: const _HomeBody(),
+            child: _HomeContent(viewModel: viewModel),
           );
         },
       ),
@@ -36,7 +91,8 @@ class _HomeViewState extends State<HomeView> {
 }
 
 class _HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const _HomeAppbar({Key? key}) : super(key: key);
+  const _HomeAppbar({Key? key, required this.viewModel}) : super(key: key);
+  final HomeViewModel viewModel;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -67,16 +123,16 @@ class _HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
             const SizedBox(width: AppSize.s12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
-                Text(
+              children: <Widget>[
+                const Text(
                   AppStrings.welcome,
                   style: TextStyle(
                     fontSize: FontSizeManager.s14,
                   ),
                 ),
                 Text(
-                  'Jose Gómez',
-                  style: TextStyle(
+                  viewModel.status.accountInfo.usuario.toUpperCase(),
+                  style: const TextStyle(
                     fontWeight: FontWeightManager.bold,
                   ),
                 ),
@@ -89,22 +145,24 @@ class _HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class _HomeBody extends StatelessWidget {
-  const _HomeBody({Key? key}) : super(key: key);
+class _HomeContent extends StatelessWidget {
+  const _HomeContent({Key? key, required this.viewModel}) : super(key: key);
+  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const _SearchSort(),
-        const _AccountsList(),
+        _SearchSort(viewModel: viewModel),
+        _AccountsList(viewModel: viewModel),
       ],
     );
   }
 }
 
 class _SearchSort extends StatelessWidget {
-  const _SearchSort({Key? key}) : super(key: key);
+  const _SearchSort({Key? key, required this.viewModel}) : super(key: key);
+  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -125,17 +183,24 @@ class _SearchSort extends StatelessWidget {
                 ),
               ),
               // TODO: Search account in real time
-              onChanged: (String? value) {},
+              onChanged: viewModel.searchAccounts,
             ),
           ),
           Transform(
             alignment: Alignment.center,
-            // TODO: Create rotation of sort icon and change tooltip
-            transform: Matrix4.rotationX(0 /* math.pi */),
+            transform: Matrix4.rotationX(
+              viewModel.status.ascending
+                  ? 0
+                  : viewModel.status.descending
+                      ? math.pi
+                      : 0,
+            ),
             child: IconButton(
-              onPressed: () {},
+              onPressed: viewModel.sortAccountsByDate,
               splashRadius: AppSize.s20,
-              tooltip: AppStrings.sortAsc,
+              tooltip: viewModel.status.ascending
+                  ? AppStrings.sortAsc
+                  : AppStrings.sortDesc,
               icon: Icon(
                 IconManager.sort,
                 color: ColorManager.primary,
@@ -150,7 +215,8 @@ class _SearchSort extends StatelessWidget {
 }
 
 class _AccountsList extends StatelessWidget {
-  const _AccountsList({Key? key}) : super(key: key);
+  const _AccountsList({Key? key, required this.viewModel}) : super(key: key);
+  final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -176,16 +242,19 @@ class _AccountsList extends StatelessWidget {
                 return Future.delayed(const Duration(seconds: 1));
               },
               child: ListView.separated(
-                itemCount: 5,
+                itemCount: viewModel.status.accountInfo.Cuentas.length,
                 separatorBuilder: (context, index) {
                   return const SizedBox(height: AppSize.s16);
                 },
                 itemBuilder: (context, index) {
+                  final Account account =
+                      viewModel.status.accountInfo.Cuentas[index];
                   return AccountCard(
                     account: Account(
-                        accountNumber: '111111111',
-                        amount: '30000000',
-                        createdDate: '10/01/2022'),
+                      numero: account.numero,
+                      saldo: account.saldo,
+                      fechaApertura: account.fechaApertura,
+                    ),
                   );
                 },
               ),

@@ -58,14 +58,19 @@ class LoginViewModel extends EffectsViewModel<LoginStatus, LoginEffect> {
     }
   }
 
-  void register(
-    BuildContext context,
-  ) async {
+  void register(BuildContext context) async {
     status = status.copyWith(isLoading: true);
-    _localStorage.getPreferences()?.setString(status.userName, status.password);
-    addEffect(ShowSnackbarSuccessEffect(AppStrings.succesRegister));
+    if (status.password == status.repeatPassword) {
+      _localStorage
+          .getPreferences()
+          ?.setString(status.userName, status.password);
+      addEffect(ShowSnackbarSuccessEffect(AppStrings.succesRegister));
+      status = status.copyWith(isRegister: false);
+    } else {
+      addEffect(ShowSnackbarErrorEffect(AppStrings.errorRegister));
+    }
 
-    status = status.copyWith(isLoading: false, isRegister: false);
+    status = status.copyWith(isLoading: false);
   }
 
   void login(BuildContext context) async {

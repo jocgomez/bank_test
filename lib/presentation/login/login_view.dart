@@ -20,7 +20,9 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LoginViewModel>(
-      create: (_) => LoginViewModel(locator<LocalStorageService>()),
+      create: (_) => LoginViewModel(
+        locator<LocalStorageService>(),
+      ),
       builder: (BuildContext context, _) {
         return const _LoginBody();
       },

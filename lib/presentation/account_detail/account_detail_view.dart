@@ -66,9 +66,9 @@ class _AccountDetailBody extends StatelessWidget {
         const SizedBox(height: AppSize.s20),
         AccountCard(
           account: Account(
-            accountNumber: '111111111',
-            amount: '30000000',
-            createdDate: '10/01/2022',
+            numero: '111111111',
+            saldo: '30000000',
+            fechaApertura: '10/01/2022',
           ),
           onTap: false,
         ),

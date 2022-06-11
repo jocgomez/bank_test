@@ -1,3 +1,5 @@
+import 'package:bank_test/domain/models/account_info.dart';
+import 'package:bank_test/domain/models/movements/movement_account_info.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 
@@ -5,7 +7,7 @@ part 'gateway_service.g.dart';
 
 class UrlsApi {
   static const String getAccountInformation =
-      '/2677cff9-3395-48d4-8e1a-ea6d660406c7';
+      '/79bd5861-8cbf-46b6-bb6c-88b13457c40f';
   static const String getMovementAccount =
       '/ed3641e0-b97e-4c81-a404-24cbdc36430e';
 }
@@ -14,9 +16,11 @@ class UrlsApi {
 abstract class GatewayService {
   factory GatewayService(Dio dio, {String baseUrl}) = _GatewayService;
 
-  //Login & Register
-  /* @POST(UrlsApi.getAccountInformation)
-  Future<ResponseData<ResultLogin>> getAccountInformation(
-    @Body() BodyLogin bodyLogin,
-  ); */
+  //Account information
+  @POST(UrlsApi.getAccountInformation)
+  Future<AccountInfo> getAccountInformation();
+
+  //Account movements
+  @POST(UrlsApi.getAccountInformation)
+  Future<MovementAccountInfo> getMovementAccountInformation();
 }

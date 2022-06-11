@@ -5,14 +5,14 @@ part 'account.g.dart';
 
 @JsonSerializable()
 class Account {
-  final String accountNumber;
-  final String amount;
-  final String createdDate;
+  final String numero;
+  final String saldo;
+  final String fechaApertura;
 
   Account({
-    required this.accountNumber,
-    required this.amount,
-    required this.createdDate,
+    required this.numero,
+    required this.saldo,
+    required this.fechaApertura,
   });
 
   factory Account.fromJson(Map<String, dynamic> json) =>
@@ -21,10 +21,10 @@ class Account {
   Map<String, dynamic> toJson() => _$AccountToJson(this);
 
   double getAmount() {
-    return double.parse(amount);
+    return double.parse(saldo);
   }
 
   DateTime getCreatedDate() {
-    return DateFormat("dd-MM-yyyy").parse(createdDate);
+    return DateFormat("dd/MM/yyyy").parse(fechaApertura);
   }
 }
