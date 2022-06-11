@@ -8,7 +8,7 @@ part of 'gateway_service.dart';
 
 class _GatewayService implements GatewayService {
   _GatewayService(this._dio, {this.baseUrl}) {
-    baseUrl ??= 'https://run.mocky.io/v3/';
+    baseUrl ??= 'https://run.mocky.io/v3';
   }
 
   final Dio _dio;

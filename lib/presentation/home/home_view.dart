@@ -1,3 +1,4 @@
+import 'package:bank_test/domain/models/account.dart';
 import 'package:bank_test/presentation/components/account_card.dart';
 import 'package:bank_test/presentation/resources/assets_manager.dart';
 import 'package:bank_test/presentation/resources/color_manager.dart';
@@ -180,7 +181,12 @@ class _AccountsList extends StatelessWidget {
                   return const SizedBox(height: AppSize.s16);
                 },
                 itemBuilder: (context, index) {
-                  return const AccountCard();
+                  return AccountCard(
+                    account: Account(
+                        accountNumber: '111111111',
+                        amount: '30000000',
+                        createdDate: '10/01/2022'),
+                  );
                 },
               ),
             ),

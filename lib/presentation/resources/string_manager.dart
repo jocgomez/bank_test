@@ -16,4 +16,7 @@ class AppStrings {
   static const String bankAccounts = 'Cuentas bancarias:';
   static const String account = 'Cuenta';
   static const String cop = 'COP';
+
+  //Detail account Strings
+  static const String detailAccount = 'Detalle de cuenta';
 }

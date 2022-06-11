@@ -11,7 +11,7 @@ class Routes {
   static const String loginRoute = '/login';
   static const String registerRoute = '/register';
   static const String homeRoute = '/home';
-  static const String storeDetailRoute = '/storeDetail';
+  static const String accountDetailRoute = '/accountDetail';
 }
 
 class RouteGenerator {
@@ -25,7 +25,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const RegisterView());
       case Routes.homeRoute:
         return MaterialPageRoute(builder: (_) => const HomeView());
-      case Routes.storeDetailRoute:
+      case Routes.accountDetailRoute:
         return MaterialPageRoute(builder: (_) => const AccountDetailView());
       default:
         return undefinedRoute();

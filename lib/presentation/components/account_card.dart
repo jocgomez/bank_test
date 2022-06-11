@@ -1,11 +1,17 @@
+import 'package:bank_test/domain/models/account.dart';
 import 'package:bank_test/presentation/resources/color_manager.dart';
 import 'package:bank_test/presentation/resources/font_manager.dart';
+import 'package:bank_test/presentation/resources/routes_manager.dart';
 import 'package:bank_test/presentation/resources/string_manager.dart';
 import 'package:bank_test/presentation/resources/values_manager.dart';
+import 'package:bank_test/utils/format_amount.dart';
 import 'package:flutter/material.dart';
 
 class AccountCard extends StatelessWidget {
-  const AccountCard({Key? key}) : super(key: key);
+  const AccountCard({Key? key, required this.account, this.onTap = true})
+      : super(key: key);
+  final Account account;
+  final bool onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,11 @@ class AccountCard extends StatelessWidget {
       elevation: AppSize.s4,
       margin: const EdgeInsets.symmetric(horizontal: AppMargin.m20),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap
+            ? () {
+                Navigator.pushNamed(context, Routes.accountDetailRoute);
+              }
+            : null,
         child: Row(
           children: <Widget>[
             Container(
@@ -41,7 +51,7 @@ class AccountCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '111111111',
+                              account.accountNumber,
                               style: TextStyle(
                                 fontSize: FontSizeManager.s12,
                                 fontWeight: FontWeightManager.medium,
@@ -50,7 +60,7 @@ class AccountCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Text('10/01/2022',
+                        Text(account.createdDate,
                             style: TextStyle(
                                 fontSize: FontSizeManager.s12,
                                 fontWeight: FontWeightManager.medium,
@@ -61,7 +71,7 @@ class AccountCard extends StatelessWidget {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        '\$ 30.000.000 ${AppStrings.cop}',
+                        '\$ ${FormatAmount.format(account.getAmount())} ${AppStrings.cop}',
                         style: TextStyle(
                           fontSize: FontSizeManager.s20,
                           fontWeight: FontWeightManager.bold,
