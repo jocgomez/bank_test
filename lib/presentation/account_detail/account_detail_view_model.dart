@@ -37,9 +37,11 @@ class AccountDetailViewModel
 
   Future<void> getDetailAccountInfo() async {
     try {
+      status = status.copyWith(isLoading: true);
       await _interactor.getMovementInfo().then((value) {
         status = status.copyWith(movementAccountInfo: value);
       });
+      status = status.copyWith(isLoading: false);
     } catch (e) {
       addEffect(ShowSnackbarErrorEffect(AppStrings.errorQuery));
       print('Error $e');

@@ -234,31 +234,37 @@ class _AccountsList extends StatelessWidget {
               ),
             ),
           ),
-          Flexible(
-            child: RefreshIndicator(
-              color: ColorManager.primary,
-              onRefresh: () {
-                return Future.delayed(const Duration(seconds: 1));
-              },
-              child: ListView.separated(
-                itemCount: viewModel.status.accountInfo.Cuentas.length,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: AppSize.s16);
-                },
-                itemBuilder: (context, index) {
-                  final Account account =
-                      viewModel.status.accountInfo.Cuentas[index];
-                  return AccountCard(
-                    account: Account(
-                      numero: account.numero,
-                      saldo: account.saldo,
-                      fechaApertura: account.fechaApertura,
+          viewModel.status.isLoading
+              ? Flexible(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(ColorManager.primary),
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
+                )
+              : Flexible(
+                  child: RefreshIndicator(
+                    color: ColorManager.primary,
+                    onRefresh: viewModel.onInit,
+                    child: ListView.separated(
+                      itemCount: viewModel.status.accountInfo.Cuentas.length,
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(height: AppSize.s16);
+                      },
+                      itemBuilder: (context, index) {
+                        final Account account =
+                            viewModel.status.accountInfo.Cuentas[index];
+                        return AccountCard(
+                          account: Account(
+                            numero: account.numero,
+                            saldo: account.saldo,
+                            fechaApertura: account.fechaApertura,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
         ],
       ),
     );

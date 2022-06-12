@@ -146,24 +146,33 @@ class _ListAccountMovements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: ListView.separated(
-          itemCount: viewModel.status.movementAccountInfo.movimientos.length,
-          separatorBuilder: (context, index) {
-            return const Divider();
-          },
-          itemBuilder: (context, index) {
-            Movement movement =
-                viewModel.status.movementAccountInfo.movimientos[index];
-            return _AccountMovement(
-              movement: Movement(
-                tipo: movement.tipo,
-                monto: movement.monto,
-                fechaMovimiento: movement.fechaMovimiento,
+    return viewModel.status.isLoading
+        ? Flexible(
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(ColorManager.primary),
               ),
-            );
-          }),
-    );
+            ),
+          )
+        : Flexible(
+            child: ListView.separated(
+                itemCount:
+                    viewModel.status.movementAccountInfo.movimientos.length,
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+                itemBuilder: (context, index) {
+                  Movement movement =
+                      viewModel.status.movementAccountInfo.movimientos[index];
+                  return _AccountMovement(
+                    movement: Movement(
+                      tipo: movement.tipo,
+                      monto: movement.monto,
+                      fechaMovimiento: movement.fechaMovimiento,
+                    ),
+                  );
+                }),
+          );
   }
 }
 

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bank_test/data/get_it_locator.dart';
 import 'package:bank_test/domain/models/account_info.dart';
 import 'package:bank_test/data/services/gateway_service.dart';

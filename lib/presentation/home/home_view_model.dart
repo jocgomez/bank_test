@@ -36,12 +36,14 @@ class HomeViewModel extends EffectsViewModel<HomeStatus, HomeEffect> {
 
   Future<void> getAccountInfo() async {
     try {
+      status = status.copyWith(isLoading: true);
       await _interactor.getAccountInfo().then((value) {
         status = status.copyWith(
           accountInfo: value,
           savedAccounts: value.Cuentas,
         );
       });
+      status = status.copyWith(isLoading: false);
     } catch (e) {
       addEffect(ShowSnackbarErrorEffect(AppStrings.errorQuery));
       print('Error $e');
